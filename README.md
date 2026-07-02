@@ -1,85 +1,87 @@
 # 2048 Expectimax Bitboard
 
-一个纯算法版 2048 AI：`Expectimax` 树搜索、64 位 `bitboard` 棋盘、行移动查找表和启发式评估函数。主程序可以一次模拟多局，并把每局每一次 move 的棋盘保存到 `games/001/001.jpg` 这类目录里。
+A pure algorithmic 2048 AI built with `Expectimax` tree search, a 64-bit `bitboard` board representation, row-move lookup tables, and heuristic evaluation. The main program can simulate multiple games in one run and save every board state after each move into directories such as `games/001/001.jpg`.
 
-## 目录结构
+## Directory Structure
 
 ```text
-main.py                 # 主程序入口
+main.py                 # Main entry point
 src/
-  ai.py                 # Expectimax 和评估函数
-  bitboard.py           # 64 位棋盘、移动规则、查找表
-  game.py               # 2048 随机发牌和游戏循环
-  render.py             # JPG 棋盘渲染
+  ai.py                 # Expectimax and evaluation functions
+  bitboard.py           # 64-bit board, move rules, lookup tables
+  game.py               # 2048 random tile spawning and game loop
+  render.py             # JPG board rendering
 games/
   001/
-    001.jpg              # 初始棋盘
-    002.jpg              # 第 1 次 move 后
-    003.jpg              # 第 2 次 move 后
+    001.jpg              # Initial board
+    002.jpg              # After move 1
+    003.jpg              # After move 2
     ...
 ```
 
-## 安装依赖
+## Install Dependencies
 
 ```bash
 python3 -m pip install -r requirements.txt
 ```
 
-## 运行
+## Run
 
-模拟 5 局：
+Simulate 5 games:
 
 ```bash
 python3 main.py --games 5
 ```
 
-指定搜索深度和每步时间预算：
+Specify the search depth and per-move time budget:
 
 ```bash
 python3 main.py --games 5 --depth 7 --time-limit 0.12
 ```
 
-固定随机种子，方便复现实验：
+Set a fixed random seed for reproducible experiments:
 
 ```bash
 python3 main.py --games 5 --seed 2048
 ```
 
-生成 Markdown 图文报告：
+Generate a Markdown report with rendered board images:
 
 ```bash
 python3 report_maker.py
 ```
 
-报告会写入 `reports/`，例如 `reports/001.md` 会按顺序引用 `games/001/` 里的所有 move 图片。
+Reports are written to `reports/`. For example, `reports/001.md` references all move images from `games/001/` in order.
 
-## 算法说明
+## Algorithm Notes
 
-棋盘被压缩成一个 64 位整数。16 个格子各占 4 bit，格子的值保存为指数，例如 `2` 存成 `1`，`2048` 存成 `11`，`32768` 存成 `15`。这意味着本实现的单格最大值是 `32768`。左右移动通过 65536 个可能行状态的预计算查找表完成，上下移动则先转置棋盘再复用行移动表。
+The board is compressed into a 64-bit integer. Each of the 16 cells occupies 4 bits, and each tile stores its exponent instead of its raw value. For example, `2` is stored as `1`, `2048` is stored as `11`, and `32768` is stored as `15`. This means the maximum tile value supported by this implementation is `32768`.
 
-AI 使用 Expectimax：
+Left and right moves are handled through precomputed lookup tables for all 65,536 possible row states. Up and down moves transpose the board first, then reuse the row-move tables.
 
-- `MAX` 层枚举上下左右，选择期望分最高的移动。
-- `CHANCE` 层枚举空格，按 `2=90%`、`4=10%` 计算随机发牌后的期望值。
-- 空格很多时会抽取最危险的若干发牌位置，减少搜索爆炸。
+The AI uses Expectimax:
 
-叶子节点评估函数包含：
+- The `MAX` layer enumerates up, down, left, and right, then chooses the move with the highest expected score.
+- The `CHANCE` layer enumerates empty cells and computes the expected value after random tile spawning with `2=90%` and `4=10%`.
+- When many empty cells are available, the search samples a subset of the most dangerous spawn positions to reduce search explosion.
 
-- 空格数：空间越大越安全。
-- 单调性：鼓励大数沿行列保持方向。
-- 平滑度：鼓励相邻数字接近，方便合并。
-- 角落控制：鼓励最大块停在角落。
-- 蛇形权重：让大块沿固定路径聚集。
+The leaf-node evaluation function includes:
 
-## 结束条件
+- Empty cells: more free space is safer.
+- Monotonicity: encourages large values to remain ordered along rows or columns.
+- Smoothness: encourages adjacent tiles to have similar values, making merges easier.
+- Corner control: encourages the largest tile to stay in a corner.
+- Snake weights: encourages large tiles to cluster along a fixed path.
 
-这个程序不会无限运行。一局会在以下任一条件发生时结束：
+## Termination Conditions
 
-- 棋盘达到本 64 位 bitboard 编码的最大块 `32768`。
-- 棋盘无合法移动。
+The program does not run forever. A game ends when either of the following conditions is met:
 
-如果要支持 `65536` 或更大的块，需要把单格编码从 4 bit 扩展到更多 bit，不能再使用当前这种刚好塞进一个 `uint64` 的经典方案。
+- The board reaches the maximum tile supported by the 64-bit bitboard encoding: `32768`.
+- The board has no legal moves left.
 
-## 胜率说明
+To support `65536` or larger tiles, the per-cell encoding would need to grow beyond 4 bits. The current classic layout works because it fits exactly into a single `uint64`.
 
-这个实现追求高胜率，但 2048 有随机发牌，不存在每局都能达到 `32768` 的确定性保证。提高 `--depth` 和 `--time-limit` 通常能增强表现，代价是运行更慢。
+## Win Rate Notes
+
+This implementation aims for a high win rate, but 2048 includes random tile spawning, so there is no deterministic guarantee that every game will reach `32768`. Increasing `--depth` and `--time-limit` usually improves performance at the cost of slower execution.
