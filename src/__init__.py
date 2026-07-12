@@ -1,1 +1,1 @@
-"""2048 Expectimax AI package."""
+"""4096 Expectimax AI package."""

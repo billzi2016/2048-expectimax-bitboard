@@ -101,7 +101,7 @@ class GameRenderer:
         image = Image.new("RGB", (self.size, self.size + self.header), (250, 248, 239))
         draw = ImageDraw.Draw(image)
 
-        draw.text((self.margin, 26), "2048 Expectimax", fill=(90, 78, 66), font=self.font_medium)
+        draw.text((self.margin, 26), "4096 Expectimax", fill=(90, 78, 66), font=self.font_medium)
         summary = f"move {move}  score {final_score}  max {max_tile}"
         draw.text((self.margin, 68), summary, fill=(122, 110, 98), font=self.font_small)
 

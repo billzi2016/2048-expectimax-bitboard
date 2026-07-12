@@ -1,6 +1,6 @@
-# 2048 Expectimax Bitboard
+# 4096 Expectimax Bitboard
 
-A pure algorithmic 2048 AI built with `Expectimax` tree search, a 64-bit `bitboard` board representation, row-move lookup tables, and heuristic evaluation. The main program can simulate multiple games in one run and save every board state after each move into directories such as `games/001/001.jpg`.
+A pure algorithmic 4096 AI built with `Expectimax` tree search, a 64-bit `bitboard` board representation, row-move lookup tables, and heuristic evaluation. The main program can simulate multiple games in one run and save every board state after each move into directories such as `games/001/001.jpg`.
 
 ## Directory Structure
 
@@ -9,7 +9,7 @@ main.py                 # Main entry point
 src/
   ai.py                 # Expectimax and evaluation functions
   bitboard.py           # 64-bit board, move rules, lookup tables
-  game.py               # 2048 random tile spawning and game loop
+  game.py               # 4096 random tile spawning and game loop
   render.py             # JPG board rendering
 games/
   001/

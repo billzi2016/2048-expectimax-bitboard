@@ -1,6 +1,6 @@
-# 2048 Expectimax Bitboard
+# 4096 Expectimax Bitboard
 
-一个纯算法版 2048 AI：`Expectimax` 树搜索、64 位 `bitboard` 棋盘、行移动查找表和启发式评估函数。主程序可以一次模拟多局，并把每局每一次 move 的棋盘保存到 `games/001/001.jpg` 这类目录里。
+一个纯算法版 4096 AI：`Expectimax` 树搜索、64 位 `bitboard` 棋盘、行移动查找表和启发式评估函数。主程序可以一次模拟多局，并把每局每一次 move 的棋盘保存到 `games/001/001.jpg` 这类目录里。
 
 ## 目录结构
 
@@ -9,7 +9,7 @@ main.py                 # 主程序入口
 src/
   ai.py                 # Expectimax 和评估函数
   bitboard.py           # 64 位棋盘、移动规则、查找表
-  game.py               # 2048 随机发牌和游戏循环
+  game.py               # 4096 随机发牌和游戏循环
   render.py             # JPG 棋盘渲染
 games/
   001/
